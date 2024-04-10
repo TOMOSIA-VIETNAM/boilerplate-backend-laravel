@@ -1,0 +1,23 @@
+{
+    "name": "tomosia/api",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nam Tran",
+            "email": "nam.tran@tomosia.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Api\\": ""
+        }
+    }
+}
