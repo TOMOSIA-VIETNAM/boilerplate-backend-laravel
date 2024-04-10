@@ -5,6 +5,7 @@
 /storage/api-docs
 /vendor
 /.idea
+/.vscode
 .composer.lock
 .env
 .env.backup
@@ -18,3 +19,4 @@ package-lock.json
 yarn.lock
 supervisord.log
 supervisord.pid
+.DS_Store
