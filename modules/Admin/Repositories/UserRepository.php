@@ -4,14 +4,13 @@ namespace Modules\Admin\Repositories;
 
 use App\Models\User;
 
-class UserRepository
+class UserRepository extends BaseRepository
 {
     /**
-     * @param int $id
-     * @return User|null
+     * @param User $model
      */
-    public function findById(int $id): ?User
+    public function __construct(User $model)
     {
-        return User::find($id);
+        $this->model = $model;
     }
 }

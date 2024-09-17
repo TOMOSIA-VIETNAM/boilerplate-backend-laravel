@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>TMS Admin | Admin Dashboard Template</title>
 
     <!-- Favicon -->
@@ -78,32 +79,29 @@
                                     </a>
                                     <h2 class="mb-2 text-center">{{ __('Sign In') }}</h2>
                                     <p class="text-center">{{ __('Login to stay connected.') }}</p>
-                                    <form>
+                                    <form method="post" action="{{ route('admin.login') }}">
+                                        @csrf
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="form-group">
                                                     <label for="email" class="form-label">{{ __('Email') }}</label>
-                                                    <input type="email" class="form-control" id="email"
-                                                        aria-describedby="email" placeholder=" ">
+                                                    <input type="email"
+                                                        class="form-control @error('email') is-invalid @enderror"
+                                                        id="email" aria-describedby="email" placeholder=" "
+                                                        value="{{ old('email') }}" name="email">
+                                                    <x-admin::input-error :messages="$errors->first('email')" />
                                                 </div>
                                             </div>
                                             <div class="col-lg-12">
                                                 <div class="form-group">
                                                     <label for="password"
                                                         class="form-label">{{ __('Password') }}</label>
-                                                    <input type="password" class="form-control" id="password"
-                                                        aria-describedby="password" placeholder=" ">
+                                                    <input type="password"
+                                                        class="form-control @error('password') is-invalid @enderror"
+                                                        id="password" aria-describedby="password" placeholder=" "
+                                                        name="password">
+                                                    <x-admin::input-error :messages="$errors->first('password')" />
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-12 d-flex justify-content-between">
-                                                <div class="form-check mb-3">
-                                                    <input type="checkbox" class="form-check-input"
-                                                        id="customCheck1">
-                                                    <label class="form-check-label" for="customCheck1">
-                                                        {{ __('Remember Me') }}
-                                                    </label>
-                                                </div>
-                                                <a href="recoverpw.html">{{ __('Forgot Password?') }}</a>
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-center">
