@@ -124,3 +124,129 @@ Release `main` branch to production
 ## 3. Interact with database
 
 Create a migration file and add columns/table, etc.
+
+## V. Deploy
+
+[Deployer documentation](https://deployer.org/docs/7.x/getting-started)
+
+#### 1.Setting up your Local Development Environment
+- Deployer installer
+```
+curl -LO https://deployer.org/deployer.phar
+```
+- Next, run a short PHP script to verify that the installer matches the SHA-1 hash for the latest installer found on the Deployer - [download page](https://deployer.org/download). Replace the highlighted value with the latest hash:
+```
+php -r "if (hash_file('sha1', 'deployer.phar') === '7fc18128545bebaa13fc7f3daa79b3e1fa67fd1e') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('deployer.phar'); } echo PHP_EOL;"
+```
+- Make Deployer available system wide
+```
+sudo mv deployer.phar /usr/local/bin/dep
+```
+- Make it executable:
+```
+sudo chmod +x /usr/local/bin/dep
+```
+#### 2. Connecting to Your Remote Git Repository
+- Local machine to generate the SSH key
+```
+ssh-keygen -t rsa -b 4096 -f  ~/.ssh/gitkey
+```
+- Create an SSH config file on your local machine:
+```
+touch ~/.ssh/config
+```
+- cd ~/.ssh/config
+```
+Host mygitserver.com
+    HostName mygitserver.com
+    IdentityFile ~/.ssh/gitkey
+```
+```
+chmod 600 ~/.ssh/config
+```
+- Display the content of your public key file with the following command:
+```
+cat ~/.ssh/gitkey.pub
+```
+- Add SSH keys to GitHub
+  Link: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
+- Test the connection with the following command:
+```
+ssh -T git@github.com
+```
+#### 3. Configuring the Deployer User
+- Log in to your LEMP server with a sudo non-root user and create a new user called "deployer" with the following command:
+```
+sudo adduser deployer
+```
+- Add the user to the www-data group to do this:
+```
+sudo usermod -aG www-data deployer
+```
+- Setting deployer’s default umask to 022:
+```
+sudo chfn -o umask=022 deployer
+```
+- Store the application in the /var/www/html/ directory, so change the ownership of the directory to the deployer user and www-data group.
+```
+sudo chown deployer:www-data /var/www/html
+```
+- The deployer user needs to be able to modify files and folders within the /var/www/html directory. Given that, all new files and subdirectories created within the /var/www/html directory should inherit the folder’s group id (www-data). To achieve this, set the group id on this directory with the following command:
+```
+sudo chmod g+s /var/www/html
+```
+- Switch to the deployer user on your server:
+```
+su - deployer
+```
+- Generate an SSH key pair as the deployer user. This time, you can accept the default filename of the SSH keys:
+```
+ssh-keygen -t rsa -b 4096
+```
+- Display the public key:
+```
+cat ~/.ssh/id_rsa.pub
+```
+- Feel free to replace deployerkey with a filename of your choice:
+```
+ssh-keygen -t rsa -b 4096 -f  ~/.ssh/deployerkey
+```
+- Copy the following command’s output which contains the public key:
+```
+nano ~/.ssh/authorized_keys
+```
+- Restrict the permissions of the file:
+```
+chmod 600 ~/.ssh/authorized_keys
+```
+- Now switch back to the sudo user:
+```
+exit
+```
+- Log in from your local machine to your server as the deployer user to test the connection:
+```
+ssh deployer@your_server_ip  -i ~/.ssh/deployerkey
+```
+
+#### 4. Deploying the Application
+- Open the terminal on your local machine and change the working directory to the application’s folder with the following command:
+```
+cd /path/to/laravel-app
+```
+
+The ```deploy.php``` file is used to manage deployment jobs. You can update or add new jobs as needed.
+#### 5. Deploy Local
+To deploy the project from your local environment to the server, use the following command:
+
+    dep deploy [host]
+
+#### 6. Deploy via GitHub Action
+- Create GitHub Secrets for SSH:
+To access the server securely, you need to store your SSH private key in GitHub Secrets:
+  1. Go to your GitHub repository:
+
+     Settings > Secrets and variables > Actions > New repository secret
+
+  2. Add a new secret called **SSHKEY** and paste your private key.
+- GitHub Action Workflow:
+The workflow file ```.github/workflows/staging.yml``` is set to deploy when there is a merge commit to the develop branch. You can update the file or create an additional file for another server.

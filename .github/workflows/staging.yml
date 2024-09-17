@@ -1,0 +1,32 @@
+name: Deploy Staging
+
+on:
+  pull_request:
+    branches:
+      - staging
+    types:
+      - closed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+
+      - name: Install dependencies
+        run: composer update --lock
+
+      - name: Deploy
+        uses: deployphp/action@v1
+        with:
+          # The private SSH key used for connecting to remote servers
+          # This key is securely stored in GitHub Secrets and accessed via ${{ secrets.SSHKEY_STG }}
+          private-key: ${{ secrets.SSHKEY_STG }}
+          dep: deploy staging -v
