@@ -64,3 +64,17 @@ if (! function_exists('normalizeStr')) {
         return $text ? Normalizer::normalize($text, Normalizer::FORM_C) : '';
     }
 }
+if (! function_exists('checkRolePermission')) {
+
+    function checkRolePermission($role, $permission)
+    {
+        try {
+            if ($role->hasPermissionTo($permission)) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+}

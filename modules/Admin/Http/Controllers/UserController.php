@@ -13,7 +13,10 @@ class UserController extends AdminController
     /**
      * @param UserService $userService
      */
-    public function __construct(protected UserService $userService) {}
+    public function __construct(protected UserService $userService)
+    {
+        $this->middleware(['role:master_admin|admin|user', 'permission:writer'], ['except' => ['index']]);
+    }
 
     /**
      * @return View
