@@ -2,14 +2,20 @@
 
 namespace App\Containers\Admin\Models;
 
+use App\Containers\Admin\Models\Traits\methods\AdminMethod;
+use App\Enums\LogNameEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Admin extends Authenticatable
 {
     use HasFactory;
     use HasRoles;
+    use LogsActivity;
+    use AdminMethod;
 
     /**
      * The attributes that are mass assignable.
@@ -38,4 +44,32 @@ class Admin extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+
+    protected static $logAttributes = ['email'];
+
+    protected static $logName = LogNameEnum::ADMIN;
+
+    protected static $logOnlyDirty = true;
+
+    /**
+     * @return LogOptions
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(self::$logAttributes)
+            ->logOnlyDirty(self::$logOnlyDirty)
+            ->useLogName(self::$logName);
+    }
+
+    /**
+     * Update description column
+     *
+     * @param string $eventName
+     * @return string
+     */
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return ":subject.email has been {$eventName}";
+    }
 }

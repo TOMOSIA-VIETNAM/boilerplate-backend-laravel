@@ -3,9 +3,9 @@
 namespace App\Containers\Admin\Actions;
 
 use App\Actions\BaseAction;
+use App\Containers\Admin\Actions\LogActivity\LogCreatedAdminAction;
 use App\Containers\Admin\Repositories\AdminRepository;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Models\Role;
 
 class CreateAction extends BaseAction
 {
@@ -19,13 +19,14 @@ class CreateAction extends BaseAction
 
     /**
      * @param array $data
+     * @param string $roleName
      * @return Model|null
      */
-    public function handle(array $data): Model|null
+    public function handle(array $data, string $roleName): Model|null
     {
         $admin = $this->repo->create($data);
-
-        $admin->syncRoles(Role::findById($data['role_user'])->name);
+        $admin->syncRoles($roleName);
+        resolve(LogCreatedAdminAction::class)->handle($admin, $roleName);
 
         return $admin;
     }

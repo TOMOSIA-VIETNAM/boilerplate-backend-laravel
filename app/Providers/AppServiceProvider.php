@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Shared\SharedProvider;
 use Illuminate\Support\ServiceProvider;
 use Modules\Admin\Providers\AdminServiceProvider;
 use Modules\Api\Providers\ApiServiceProvider;
@@ -13,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->register(SharedProvider::class);
         $this->app->register(AdminServiceProvider::class);
         $this->app->register(ApiServiceProvider::class);
     }

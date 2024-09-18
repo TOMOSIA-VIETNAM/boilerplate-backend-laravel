@@ -44,4 +44,11 @@ class AdminFactory extends Factory
     {
         return $this->state(fn(array $attributes) => []);
     }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (Admin $admin) {
+            $admin->syncRoles('master_admin');
+        });
+    }
 }
