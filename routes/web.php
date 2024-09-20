@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Dedoc\Scramble\Scramble;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,3 +13,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Scramble::registerUiRoute('api-docs');
+
+Route::get('/', function () {
+    return redirect()->to('/api-docs');
+});
+

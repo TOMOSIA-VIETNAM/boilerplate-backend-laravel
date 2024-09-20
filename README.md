@@ -60,6 +60,10 @@ Add this line to hosts file
     sail artisan db:seed
     sail artisan storage:link
 
+Document api for [scramble]('https://scramble.dedoc.co/')
+
+Url document local: http://template-laravel-module.loc/api-docs
+
 ### 2. Frontend
 
     sail npm install
