@@ -2,13 +2,13 @@
 
 namespace Modules\Api\Http\Controllers\Auth;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Modules\Api\Http\Controllers\ApiController;
 use Modules\Api\Http\Requests\Auth\LoginRequest;
+use Modules\Api\Http\Requests\Auth\RegisterRequest;
 use Modules\Api\Services\AuthService;
+use Modules\Api\Transformers\SuccessResource;
 
 class AuthController extends ApiController
 {
@@ -24,27 +24,41 @@ class AuthController extends ApiController
      * Handle an incoming authentication request.
      *
      * @param LoginRequest $request
-     * @return JsonResponse
+     * @return SuccessResource
      * @throws ValidationException
      */
-    public function login(LoginRequest $request): JsonResponse
+    public function login(LoginRequest $request): SuccessResource
     {
         $response = $this->service->login($request);
 
-        return $this->response(resource: $response, status: Response::HTTP_OK);
+        return SuccessResource::make($response);
     }
 
     /**
      * Handle unauthentication request.
-     * 
-     * @return JsonResponse
+     *
+     * @return SuccessResource
      */
-    public function logout(){
+    public function logout(): SuccessResource
+    {
         Auth::guard('api')
             ->user()
             ->tokens()
             ->delete();
 
-        return $this->response(status: Response::HTTP_OK);
+        return SuccessResource::make();
+    }
+
+    /**
+     * Handle an incoming authentication request.
+     *
+     * @param RegisterRequest $request
+     * @return SuccessResource
+     */
+    public function register(RegisterRequest $request): SuccessResource
+    {
+        $response = $this->service->register($request->onlyFields());
+
+        return SuccessResource::make($response);
     }
 }

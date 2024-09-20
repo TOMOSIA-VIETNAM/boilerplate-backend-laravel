@@ -422,4 +422,65 @@ abstract class BaseRepository
 
         return $this->query->findOrFail($id);
     }
+
+
+    /**
+     * @param int $id
+     * @param array $columns
+     * @return Model|null
+     */
+    public function findById(int $id, array $columns = ['*']): ?Model
+    {
+        $this->unsetClauses();
+
+        $this->newQuery()->eagerLoad();
+
+        return $this->query->findOrFail($id, $columns);
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return Model|null
+     */
+    public function create(array $data): ?Model
+    {
+        $this->unsetClauses();
+        $model = $this->model->create($data);
+
+        return $model->fresh();
+    }
+
+    /**
+     * @param array $attributes
+     * @param array $values
+     * @return Model
+     * @return \Illuminate\Database\Eloquent\Model|static
+     */
+    public function updateOrCreate(array $attributes, array $values): ?Model
+    {
+        $this->unsetClauses();
+        $model = $this
+            ->model
+            ->query()
+            ->updateOrCreate($attributes, $values);
+
+        return $model->fresh();
+    }
+
+    /**
+     * @param int $modelId
+     * @param array $data
+     * @param array $options
+     *
+     * @return Model|null
+     */
+    public function updateById(int $modelId, array $data, array $options = []): ?Model
+    {
+        $this->unsetClauses();
+        $model = $this->findById($modelId);
+        $model->update($data, $options);
+
+        return $model->fresh();
+    }
 }

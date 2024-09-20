@@ -4,16 +4,12 @@ namespace Modules\Api\Services;
 
 use App\Models\User;
 use App\Shared\Storage\StorageClient;
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Modules\Api\Http\Requests\Auth\LoginRequest;
 use Modules\Api\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 
-class AuthService
+class UserService
 {
     /**
      * @param UserRepository $userRepository
@@ -22,53 +18,55 @@ class AuthService
     public function __construct(protected UserRepository $userRepository, protected StorageClient $storageClient) {}
 
     /**
-     * Handle login request
-     *
-     * @param LoginRequest $request
-     * @return array
-     */
-    public function login(LoginRequest $request): array
-    {
-        $request->authenticate();
-        $user = Auth::guard('api')->user();
-
-        return $this->createToken($user);
-    }
-
-    /**
      * @param array $data
-     * @return array|null
+     * @return User|null
      */
-    public function register(array $data): array|null
+    public function updateProfile(array $data): User|null
     {
         try {
-            $user = DB::transaction(function () use ($data) {
-                return $this->userRepository->create($data);
-            });
-
-            if (!$user) {
-                return null;
-            }
+            /** @var User */
+            $user = auth()->guard('api')->user();
 
             if (!empty($data['avatar'])) {
                 $uploadedAvatar = $this->handleAvatarUpload($user, $data['avatar']);
-
-                $user->update([
-                    'avatar' => $uploadedAvatar['storage_path']
-                ]);
+                $data['avatar'] = $uploadedAvatar['storage_path'];
             }
 
-            return $this->createToken($user);
+            $user->update($data);
 
+            return $user;
         } catch (\Exception $e) {
             Log::error(
                 logErrorMessage(
-                    message: '[ERROR_REGISTER_USER]',
+                    message: '[ERROR_UPDATE_USER]',
                     file: $e->getFile(),
                     line: $e->getLine()
                 )
             );
             return null;
+        }
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
+    public function updatePassword(array $data): bool
+    {
+        try {
+            /** @var User */
+            $user = auth()->guard('api')->user();
+
+            return $user->update($data);
+        } catch (\Exception $e) {
+            Log::error(
+                logErrorMessage(
+                    message: '[ERROR_UPDATE_PASSWORD]',
+                    file: $e->getFile(),
+                    line: $e->getLine()
+                )
+            );
+            return false;
         }
     }
 
@@ -90,20 +88,5 @@ class AuthService
         }
 
         return $uploadedAvatar;
-    }
-
-    /**
-     * @param User|Authenticatable $user
-     * @return array
-     */
-    protected function createToken(User|Authenticatable $user): array
-    {
-        $token = $user->createToken('API Token')->plainTextToken;
-
-        return [
-            'message' => 'Register Success',
-            'token' => $token,
-            'type' => 'Bear'
-        ];
     }
 }

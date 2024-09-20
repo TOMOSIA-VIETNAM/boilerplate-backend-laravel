@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Modules\Api\Http\Controllers\Auth\AuthController;
+use Modules\Api\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,13 +18,21 @@ use Modules\Api\Http\Controllers\Auth\AuthController;
 Route::group([
     'controller' => AuthController::class
 ], function () {
+    Route::post('/register', 'register')->name('register');
     Route::post('/login', 'login')->name('login');
     Route::post('/logout', 'logout')
         ->middleware('auth:sanctum')
         ->name('logout');
 });
 
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::group([
+        'prefix' => 'user',
+        'controller' => UserController::class,
+        'as' => 'user.'
+    ], function () {
+        Route::get('me', 'profile')->name('profile');
+        Route::post('update', 'update')->name('update');
+        Route::post('change_password', 'changePassword')->name('change.password');
+    });
 });
