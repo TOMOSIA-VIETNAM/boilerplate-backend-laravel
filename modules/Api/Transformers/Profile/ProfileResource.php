@@ -32,6 +32,7 @@ class ProfileResource extends Resource
             'name' => $this->resource->name,
             'email' => $this->resource->email,
             'image_url'  => $this->resource->getImageUrl($this->resource->avatar),
+            'image_thumbnail_url'  => $this->resource->getImageUrl($this->resource->avatar_thumbnail),
             'created_at' => $this->resource->created_at,
             'updated_at' => $this->resource->updated_at
         ];

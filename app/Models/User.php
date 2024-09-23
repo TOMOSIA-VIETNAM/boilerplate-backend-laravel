@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use App\Models\Attributes\UserAttribute;
 use App\Traits\MediaManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,7 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'avatar'
+        'avatar',
+        'avatar_thumbnail'
     ];
 
     /**

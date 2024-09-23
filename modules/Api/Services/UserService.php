@@ -30,6 +30,7 @@ class UserService
             if (!empty($data['avatar'])) {
                 $uploadedAvatar = $this->handleAvatarUpload($user, $data['avatar']);
                 $data['avatar'] = $uploadedAvatar['storage_path'];
+                $data['avatar_thumbnail'] = $uploadedAvatar['thumbnail_path'];
             }
 
             $user->update($data);
@@ -80,11 +81,12 @@ class UserService
     private function handleAvatarUpload(Model $user, UploadedFile $avatar): ?array
     {
         $folder = sprintf('users/%s', $user->id);
-        $uploadedAvatar = $this->storageClient->upload($avatar, $folder);
+        $uploadedAvatar = $this->storageClient->upload($avatar, $folder, hasThumbnail: true);
 
         // Delete old avatar if exists
         if ($user->avatar) {
             $this->storageClient->deleteFile($user->avatar);
+            $this->storageClient->deleteFile($user->avatar_thumbnail);
         }
 
         return $uploadedAvatar;

@@ -8,6 +8,9 @@ use Exception;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 
 class StorageClient
 {
@@ -54,23 +57,38 @@ class StorageClient
      * @return array|null
      * @throws Exception
      */
-    public function upload(UploadedFile $file, string $folder = '', bool $private = false): ?array
+    public function upload(UploadedFile $file, string $folder = '', bool $isPrivate = false, bool $hasThumbnail = false): ?array
     {
         try {
             $fileName = $this->getFileName($file);
             $path = $this->getUploadPath($folder, $fileName);
             $source = file_get_contents($file);
 
+            if ($hasThumbnail) {
+                $pathThumbnail = $this->getUploadPath($folder . '/thumbnail', $fileName);
+                $dataInfo = $this->getFileInfo($file);
+                $widthResize = $heightResize = min($dataInfo['height'], $dataInfo['width'], config('image.image_thumb_size'));
+
+                $manager = new ImageManager(Driver::class);
+                $newFile = $manager->read($file)->resize($widthResize, $heightResize)->encode(new JpegEncoder(config('image.quality_image')));
+
+                $this->storageClient->put($pathThumbnail,  $newFile, [
+                    'visibility'   => $isPrivate ? FileSystemEnum::ACL_PRIVATE : FileSystemEnum::ACL_PUBLIC,
+                ]);
+            }
+
             $this->storageClient
                 ->put($path, $source, [
-                    'visibility'   => $private ? FileSystemEnum::ACL_PRIVATE : FileSystemEnum::ACL_PUBLIC,
+                    'visibility'   => $isPrivate ? FileSystemEnum::ACL_PRIVATE : FileSystemEnum::ACL_PUBLIC,
                 ]);
 
             return [
                 'name'         => $fileName,
                 'path'         => $path,
                 'storage_path' => $path,
-                'public_url'   => $this->getPublicUrl($path)
+                'public_url'   => !$isPrivate ? $this->getPublicUrl($path) : null,
+                'thumbnail_path' => $hasThumbnail ? $pathThumbnail : null,
+                'public_thumbnail_url' => !$isPrivate ? $this->getPublicUrl($pathThumbnail) : null,
             ];
         } catch (Exception $e) {
             Log::error(
@@ -106,5 +124,30 @@ class StorageClient
 
             return false;
         } //end try
+    }
+
+    /**
+     * @param object $file File object.
+     * @return array
+     */
+    private function getFileInfo(object $file): array
+    {
+        $imageSize = getimagesize((string)$file);
+        $size = null;
+
+        if ($imageSize) {
+            $size = $imageSize[0] . 'x' . $imageSize[1];
+            return [
+                'size'   => $size,
+                'width'  => $imageSize[0],
+                'height' => $imageSize[1],
+                'type'   => $file->getClientOriginalExtension()
+            ];
+        }
+
+        return [
+            'size' => $size,
+            'type' => $file->getClientOriginalExtension()
+        ];
     }
 }

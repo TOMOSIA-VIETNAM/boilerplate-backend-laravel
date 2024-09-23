@@ -54,7 +54,8 @@ class AuthService
                 $uploadedAvatar = $this->handleAvatarUpload($user, $data['avatar']);
 
                 $user->update([
-                    'avatar' => $uploadedAvatar['storage_path']
+                    'avatar' => $uploadedAvatar['storage_path'],
+                    'avatar_thumbnail' => $uploadedAvatar['thumbnail_path']
                 ]);
             }
 
@@ -82,7 +83,7 @@ class AuthService
     private function handleAvatarUpload(Model $user, UploadedFile $avatar): ?array
     {
         $folder = sprintf('users/%s', $user->id);
-        $uploadedAvatar = $this->storageClient->upload($avatar, $folder);
+        $uploadedAvatar = $this->storageClient->upload($avatar, $folder, hasThumbnail: true);
 
         // Delete old avatar if exists
         if ($user->avatar) {

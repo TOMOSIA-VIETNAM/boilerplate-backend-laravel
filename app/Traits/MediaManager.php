@@ -135,7 +135,7 @@ trait MediaManager
         try {
             $storage = $this->getLocalStorage();
 
-            return $storage->exists($path)
+            return !empty($path) && $storage->exists($path)
                 ? $storage->path($path)
                 : null;
         } catch (Exception $e) {
@@ -161,13 +161,13 @@ trait MediaManager
         try {
             $storage = $this->getLocalStorage();
 
-            return $storage->exists($path)
+            return !empty($path) && $storage->exists($path)
                 ? $storage->temporaryUrl($path, Carbon::now()->addMinutes(30))
                 : null;
         } catch (Exception $e) {
             Log::error(
                 logErrorMessage(
-                    message: '[ERROR_GET_STORAGE_PATH]',
+                    message: '[ERROR_GET_TEMPORARY_PATH]',
                     file: $e->getFile(),
                     line: $e->getLine()
                 )
@@ -185,7 +185,7 @@ trait MediaManager
         try {
             $storage = $this->getLocalStorage();
 
-            if ($storage->exists($path)) {
+            if (!empty($path) && $storage->exists($path)) {
                 return $storage->delete($path);
             }
             return false;
