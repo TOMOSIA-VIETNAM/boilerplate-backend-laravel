@@ -85,7 +85,7 @@ desc('Restart all services');
 task('deploy:restart_all_services', [
     'deploy:restart_supervisord',
     'deploy:restart_php_fpm',
-    'deploy:restart_nginx'
+    'deploy:restart_nginx',
 ]);
 
 desc('Symlink logs');

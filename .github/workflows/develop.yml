@@ -1,16 +1,15 @@
 name: Deploy Develop
 
 on:
-  pull_request:
-    branches:
-      - develop
+  workflow_run:
+    workflows: ["CI Check"]
     types:
-      - closed
+      - completed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/checkout@v4
