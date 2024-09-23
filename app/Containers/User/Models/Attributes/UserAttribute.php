@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Attributes;
+namespace App\Containers\User\Models\Attributes;
 
 trait UserAttribute
 {

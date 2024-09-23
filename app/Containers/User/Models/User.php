@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Containers\User\Models;
 
-use App\Models\Attributes\UserAttribute;
+use App\Containers\User\Models\Attributes\UserAttribute;
 use App\Traits\MediaManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;

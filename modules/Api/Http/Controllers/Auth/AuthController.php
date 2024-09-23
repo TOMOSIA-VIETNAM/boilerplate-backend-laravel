@@ -2,24 +2,17 @@
 
 namespace Modules\Api\Http\Controllers\Auth;
 
+use App\Containers\User\Actions\Auth\LoginAction;
+use App\Containers\User\Actions\Auth\RegisterAction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Modules\Api\Http\Controllers\ApiController;
 use Modules\Api\Http\Requests\Auth\LoginRequest;
 use Modules\Api\Http\Requests\Auth\RegisterRequest;
-use Modules\Api\Services\AuthService;
 use Modules\Api\Transformers\SuccessResource;
 
 class AuthController extends ApiController
 {
-    /**
-     * @param AuthService $service
-     */
-    public function __construct(protected AuthService $service)
-    {
-        //
-    }
-
     /**
      * Handle an incoming authentication request.
      *
@@ -29,7 +22,7 @@ class AuthController extends ApiController
      */
     public function login(LoginRequest $request): SuccessResource
     {
-        $response = $this->service->login($request);
+        $response = resolve(LoginAction::class)->handle($request);
 
         return SuccessResource::make($response);
     }
@@ -57,7 +50,7 @@ class AuthController extends ApiController
      */
     public function register(RegisterRequest $request): SuccessResource
     {
-        $response = $this->service->register($request->onlyFields());
+        $response =  resolve(RegisterAction::class)->handle($request->onlyFields());
 
         return SuccessResource::make($response);
     }

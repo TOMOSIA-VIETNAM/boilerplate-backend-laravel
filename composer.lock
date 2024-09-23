@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b1fccaca24280c0c07a31a7c5f418fe",
+    "content-hash": "ebe22c763f7a60a87ace8a04673ecfa5",
     "packages": [
         {
             "name": "bensampo/laravel-enum",
@@ -5784,6 +5784,73 @@
                 }
             ],
             "time": "2024-08-30T16:03:21+00:00"
+        },
+        {
+            "name": "thejano/laravel-domain-driven-design",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thejano/laravel-domain-driven-design.git",
+                "reference": "8e5b9a7d35e06775992af84ffd625faae0e4a309"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thejano/laravel-domain-driven-design/zipball/8e5b9a7d35e06775992af84ffd625faae0e4a309",
+                "reference": "8e5b9a7d35e06775992af84ffd625faae0e4a309",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^10.0|^11.0",
+                "php": "^8.1|^8.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.6",
+                "phpstan/phpstan": "^1.10"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "TheJano\\LaravelDomainDrivenDesign\\LaravelDomainDrivenDesignServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TheJano\\LaravelDomainDrivenDesign\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dr Pshtiwan",
+                    "email": "drpshtiwan@thejano.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Helps to use domain driven design within laravel",
+            "homepage": "https://github.com/thejano/laravel-domain-driven-design",
+            "keywords": [
+                "Domain Driven Design",
+                "TheJano",
+                "dd",
+                "ddd",
+                "design",
+                "domain",
+                "domain-driven-design",
+                "drivem",
+                "laravel",
+                "laravel ddd",
+                "laravel-domain-driven-design"
+            ],
+            "support": {
+                "issues": "https://github.com/thejano/laravel-domain-driven-design/issues",
+                "source": "https://github.com/thejano/laravel-domain-driven-design/tree/1.1.0"
+            },
+            "time": "2024-03-20T13:26:08+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

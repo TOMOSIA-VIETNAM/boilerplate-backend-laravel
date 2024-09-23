@@ -1,20 +1,16 @@
 <?php
 namespace Modules\Api\Http\Controllers;
 
+use App\Containers\User\Actions\UpdatePasswordAction;
+use App\Containers\User\Actions\UpdateProfileAction;
 use Illuminate\Http\Request;
 use Modules\Api\Http\Requests\User\ChangePasswordRequest;
 use Modules\Api\Http\Requests\User\UserRequest;
-use Modules\Api\Services\UserService;
 use Modules\Api\Transformers\Profile\ProfileResource;
 use Modules\Api\Transformers\SuccessResource;
 
 class UserController extends ApiController
 {
-    /**
-     * @param UserService $userService
-     */
-    public function __construct(protected UserService $userService) {}
-
     /**
      * @param Request $request
      * @return ProfileResource
@@ -30,7 +26,7 @@ class UserController extends ApiController
      */
     public function update(UserRequest $request): ProfileResource
     {
-        $user = $this->userService->updateProfile($request->onlyFields());
+        $user = resolve(UpdateProfileAction::class)->handle($request->onlyFields());
 
         return ProfileResource::make($user);
     }
@@ -41,7 +37,7 @@ class UserController extends ApiController
      */
     public function changePassword(ChangePasswordRequest $request): SuccessResource
     {
-        $this->userService->updatePassword($request->onlyFields());
+        resolve(UpdatePasswordAction::class)->handle($request->onlyFields());
 
         return SuccessResource::make();
     }
