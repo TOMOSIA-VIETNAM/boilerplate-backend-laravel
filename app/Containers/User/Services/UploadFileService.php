@@ -20,16 +20,18 @@ class UploadFileService
         $storageClient = new StorageClient();
 
         $folder = sprintf('users/%s', $user->id);
-        $uploadedAvatar = $storageClient->upload($avatar, $folder, hasThumbnail: true);
+        $dataAvatar = $storageClient->upload($avatar, $folder, hasThumbnail: true);
 
+        // if old avatar exists then remove it
         if ($user->avatar) {
-            $storageClient->deleteFile($user->avatar);
+            $storageClient->deleteImage($user->avatar);
         }
 
+        // if old avatar thumbnail exists then remove it
         if ($user->avatar_thumbnail) {
-            $storageClient->deleteFile($user->avatar_thumbnail);
+            $storageClient->deleteImage($user->avatar_thumbnail);
         }
 
-        return $uploadedAvatar;
+        return $dataAvatar;
     }
 }

@@ -3,19 +3,19 @@
 namespace App\Shared\Storage;
 
 use App\Enums\FileSystemEnum;
-use App\Traits\MediaManager;
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Encoders\JpegEncoder;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
+use Illuminate\Support\Facades\Storage;
 
 class StorageClient
 {
-    use MediaManager;
-
     /**
      * @var Filesystem
      */
@@ -33,19 +33,123 @@ class StorageClient
     {
         $this->disk = $this->getDisk();
         if (in_array($this->disk, FileSystemEnum::LOCAL_DISKS)) {
-            $this->initLocalStorage();
+            $this->storageClient = Storage::disk($this->getDisk());
         }
     }
 
     /**
-     * Init local storage
-     *
-     * @return void
+     * Get storage disk
      * @throws Exception
      */
-    public function initLocalStorage(): void
+    public function getDisk(): string
     {
-        $this->storageClient = $this->getLocalStorage();
+        $config = config('filesystems.disks');
+        $disk = config('filesystems.default');
+
+        if (empty($config[$disk])) {
+            throw new ServiceUnavailableHttpException(
+                message: __('Disk is unavailable!')
+            );
+        }
+
+        return $disk;
+    }
+
+    /**
+     * Get public url.
+     *
+     * @param string|null $path
+     *
+     * @return null|string
+     */
+    public function getPublicUrl(?string $path): ?string
+    {
+        try {
+            return !empty($path) && $this->storageClient->exists($path)
+                ? $this->storageClient->url($path)
+                : null;
+        } catch (Exception $e) {
+            Log::error(
+                logErrorMessage(
+                    message: "[ERROR_GET_FILE_PUBLIC_URL]",
+                    file: $e->getFile(),
+                    line: $e->getLine()
+                )
+            );
+            return null;
+        }
+    }
+
+    /**
+     * Get storage path.
+     *
+     * @param string $path
+     *
+     * @return null|string
+     */
+    public function getStoragePath(string $path): ?string
+    {
+        try {
+            return !empty($path) && $this->storageClient->exists($path)
+                ? $this->storageClient->path($path)
+                : null;
+        } catch (Exception $e) {
+            Log::error(
+                logErrorMessage(
+                    message: '[ERROR_GET_STORAGE_PATH]',
+                    file: $e->getFile(),
+                    line: $e->getLine()
+                )
+            );
+            return null;
+        }
+    }
+
+    /**
+     * Get temporary url
+     *
+     * @param string $path
+     * @return string|null
+     */
+    public function getTemporaryUrl(string $path): ?string
+    {
+        try {
+            return !empty($path) && $this->storageClient->exists($path)
+                ? $this->storageClient->temporaryUrl($path, Carbon::now()->addMinutes(30))
+                : null;
+        } catch (Exception $e) {
+            Log::error(
+                logErrorMessage(
+                    message: '[ERROR_GET_TEMPORARY_PATH]',
+                    file: $e->getFile(),
+                    line: $e->getLine()
+                )
+            );
+            return null;
+        }
+    }
+
+    /**
+     * @param string $path
+     * @return bool
+     */
+    public function deleteImage(string $path): bool
+    {
+        try {
+            if (!empty($path) && $this->storageClient->exists($path)) {
+                return $this->storageClient->delete($path);
+            }
+            return false;
+        } catch (Exception $e) {
+            Log::error(
+                logErrorMessage(
+                    message: '[ERROR_DELETE_STORAGE_PATH]',
+                    file: $e->getFile(),
+                    line: $e->getLine()
+                )
+            );
+            return false;
+        }
     }
 
     /**
@@ -64,12 +168,15 @@ class StorageClient
             $path = $this->getUploadPath($folder, $fileName);
             $source = file_get_contents($file);
 
+            // Create thumbnail image if flag hasThumbnail is true
             if ($hasThumbnail) {
                 $pathThumbnail = $this->getUploadPath($folder . '/thumbnail', $fileName);
                 $dataInfo = $this->getFileInfo($file);
                 $widthResize = $heightResize = min($dataInfo['height'], $dataInfo['width'], config('image.image_thumb_size'));
 
                 $manager = new ImageManager(Driver::class);
+
+                // Resize image by width and height of original image
                 $newFile = $manager->read($file)->resize($widthResize, $heightResize)->encode(new JpegEncoder(config('image.quality_image')));
 
                 $this->storageClient->put($pathThumbnail,  $newFile, [
@@ -83,12 +190,9 @@ class StorageClient
                 ]);
 
             return [
-                'name'         => $fileName,
-                'path'         => $path,
-                'storage_path' => $path,
-                'public_url'   => !$isPrivate ? $this->getPublicUrl($path) : null,
-                'thumbnail_path' => $hasThumbnail ? $pathThumbnail : null,
-                'public_thumbnail_url' => !$isPrivate ? $this->getPublicUrl($pathThumbnail) : null,
+                'name' => $fileName,
+                'path' => $path,
+                'thumbnail_path' => $hasThumbnail ? $pathThumbnail : null
             ];
         } catch (Exception $e) {
             Log::error(
@@ -103,27 +207,46 @@ class StorageClient
     }
 
     /**
-     * Delete file.
+     * Get upload path.
      *
-     * @param string $path
+     * @param string $folder
+     * @param string $name name.
      *
-     * @return bool|null
+     * @return string
      */
-    public function deleteFile(string $path): ?bool
+    private function getUploadPath(string $folder, string $name): string
     {
-        try {
-            return $this->storageClient->delete($path);
-        } catch (Exception $e) {
-            Log::error(
-                logErrorMessage(
-                    message: '[ERROR_DELETE_FILE]',
-                    file: $e->getFile(),
-                    line: $e->getLine()
-                )
-            );
+        return sprintf('%s/%s', $folder, $name);
+    }
 
-            return false;
-        } //end try
+    /**
+     * Format file name.
+     *
+     * @param string $name Filename
+     * @param string $ext ext
+     *
+     * @return string
+     */
+    private function formatFileName(string $name, string $ext): string
+    {
+        return sprintf('%s_%s.%s', $name, time(), $ext);
+    }
+
+    /**
+     * Get file name.
+     *
+     * @param UploadedFile $file
+     * @param boolean $isRename
+     * @return string
+     */
+    private function getFileName(UploadedFile $file, bool $isRename = true): string
+    {
+        $ext = $file->getClientOriginalExtension();
+        $fileName = $isRename
+            ? randomString()
+            : pathinfo(normalizeStr($file->getClientOriginalName()), PATHINFO_FILENAME);
+
+        return $this->formatFileName(pathinfo($fileName, PATHINFO_FILENAME), $ext);
     }
 
     /**

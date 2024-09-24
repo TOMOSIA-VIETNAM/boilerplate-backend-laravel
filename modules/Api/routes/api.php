@@ -27,12 +27,12 @@ Route::group([
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::group([
-        'prefix' => 'user',
+        'prefix' => 'profile',
         'controller' => UserController::class,
         'as' => 'user.'
     ], function () {
-        Route::get('me', 'profile')->name('profile');
+        Route::get('', 'profile')->name('profile');
         Route::post('update', 'update')->name('update');
-        Route::post('change_password', 'changePassword')->name('change.password');
+        Route::post('change_password', 'changePassword')->name('change-password');
     });
 });

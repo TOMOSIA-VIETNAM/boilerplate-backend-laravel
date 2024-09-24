@@ -19,9 +19,9 @@ class UpdateProfileAction
             $user = auth()->guard('api')->user();
 
             if (!empty($data['avatar'])) {
-                $uploadedAvatar = (new UploadFileService())->uploadAvatarProfile($user, $data['avatar']);
-                $data['avatar'] = $uploadedAvatar['storage_path'];
-                $data['avatar_thumbnail'] = $uploadedAvatar['thumbnail_path'];
+                $dataAvatar = (new UploadFileService())->uploadAvatarProfile($user, $data['avatar']);
+                $data['avatar'] = $dataAvatar['path'];
+                $data['avatar_thumbnail'] = $dataAvatar['thumbnail_path'];
             }
 
             $user->update($data);

@@ -1,6 +1,7 @@
 <?php
 
 namespace Modules\Api\Http\Requests\User;
+
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Hash;
 
@@ -34,15 +35,5 @@ class ChangePasswordRequest extends FormRequest
                 $validator->errors()->add('password', 'New password cannot be the same as your current password.');
             }
         });
-    }
-
-    /**
-     * @return array
-     */
-    public function onlyFields(): array
-    {
-        return $this->only([
-            'password'
-        ]);
     }
 }

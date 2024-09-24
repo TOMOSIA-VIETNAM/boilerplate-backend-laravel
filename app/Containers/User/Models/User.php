@@ -3,7 +3,6 @@
 namespace App\Containers\User\Models;
 
 use App\Containers\User\Models\Attributes\UserAttribute;
-use App\Traits\MediaManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,7 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, MediaManager, UserAttribute;
+    use HasApiTokens, HasFactory, Notifiable, UserAttribute;
 
     /**
      * The attributes that are mass assignable.

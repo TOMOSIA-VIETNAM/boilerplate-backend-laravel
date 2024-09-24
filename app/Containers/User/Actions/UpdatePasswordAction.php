@@ -8,16 +8,18 @@ use Illuminate\Support\Facades\Log;
 class UpdatePasswordAction
 {
     /**
-     * @param array $data
+     * @param string $password
      * @return bool
      */
-    public function handle(array $data): bool
+    public function handle(string $password): bool
     {
         try {
             /** @var User */
             $user = auth()->guard('api')->user();
 
-            return $user->update($data);
+            return $user->update([
+                'password' => $password
+            ]);
         } catch (\Exception $e) {
             Log::error(
                 logErrorMessage(

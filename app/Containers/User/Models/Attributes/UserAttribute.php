@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Containers\User\Models\Attributes;
+use App\Shared\Storage\StorageClient;
 
 trait UserAttribute
 {
@@ -10,6 +11,6 @@ trait UserAttribute
      */
     public function getImageUrl(?string $path): string
     {
-        return $this->getPublicUrl($path) ?? asset('assets/images/avatars/default-avatar.webp');
+        return (new StorageClient())->getPublicUrl($path) ?? asset('assets/images/avatars/default-avatar.webp');
     }
 }

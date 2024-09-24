@@ -5,12 +5,12 @@ namespace App\Containers\User\Actions\Auth;
 use App\Containers\User\Models\User;
 use App\Containers\User\Repositories\UserRepository;
 use App\Containers\User\Services\UploadFileService;
-use App\Services\BaseService;
+use App\Actions\BaseAction;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class RegisterAction extends BaseService
+class RegisterAction extends BaseAction
 {
     /**
      * @return mixed
@@ -36,11 +36,11 @@ class RegisterAction extends BaseService
             }
 
             if (!empty($data['avatar'])) {
-                $uploadedAvatar = (new UploadFileService())->uploadAvatarProfile($user, $data['avatar']);
+                $dataAvatar = (new UploadFileService())->uploadAvatarProfile($user, $data['avatar']);
 
                 $user->update([
-                    'avatar' => $uploadedAvatar['storage_path'],
-                    'avatar_thumbnail' => $uploadedAvatar['thumbnail_path']
+                    'avatar' => $dataAvatar['path'],
+                    'avatar_thumbnail' => $dataAvatar['thumbnail_path']
                 ]);
             }
 
