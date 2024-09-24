@@ -23,9 +23,6 @@ class DeleteUserAction extends BaseAction
     public function handle(int $id): bool
     {
         $user = $this->repo->findById($id);
-        if (!$user) {
-            return false;
-        }
 
         if ($user->avatar) {
             resolve(StorageClient::class)->deleteImage($user->avatar);
