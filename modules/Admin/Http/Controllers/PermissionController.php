@@ -2,10 +2,12 @@
 
 namespace Modules\Admin\Http\Controllers;
 
+use App\Containers\RolePermission\Actions\CreatePermissionAction;
+use App\Containers\RolePermission\Actions\DeletePermissionAction;
+use App\Containers\RolePermission\Actions\UpdatePermissionAction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Modules\Admin\Http\Requests\Permission\CreateRequest;
-use Spatie\Permission\Models\Permission;
 
 class PermissionController extends AdminController
 {
@@ -23,9 +25,10 @@ class PermissionController extends AdminController
      */
     public function store(CreateRequest $request): JsonResponse
     {
-        Permission::create($request->onlyFields());
+        resolve(CreatePermissionAction::class)->handle($request->get('name'));
+        session()->flash('success', __('Permission created successfully'));
 
-        return response()->json(['message' => 'Permission created successfully']);
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -34,10 +37,13 @@ class PermissionController extends AdminController
      */
     public function delete(int $id): RedirectResponse
     {
-        $permission = Permission::findOrFail($id);
-        $permission->delete();
+        $deleted = resolve(DeletePermissionAction::class)->handle($id);
 
-        return redirect()->back();
+        if (!$deleted) {
+            redirect()->back()->with('error', __('Delete failure'));
+        }
+
+        return redirect()->back()->with('success', __('Delete successfully'));
     }
 
     /**
@@ -47,9 +53,14 @@ class PermissionController extends AdminController
      */
     public function update(int $id, CreateRequest $request): JsonResponse
     {
-        $permission = Permission::findOrFail($id);
-        $permission->update($request->onlyFields());
+        $updated = resolve(UpdatePermissionAction::class)->handle($id, $request->get('name'));
 
-        return response()->json(['success' => true, 'message' => 'Permission updated successfully']);
+        if (!$updated) {
+            session()->flash('error', __('Permission updated failure'));
+            return response()->json(['success' => false]);
+        }
+
+        session()->flash('success', __('Permission updated successfully'));
+        return response()->json(['success' => true]);
     }
 }

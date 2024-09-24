@@ -2,6 +2,7 @@
 
 namespace Modules\Admin\Http\Controllers;
 
+use App\Containers\RolePermission\Actions\AssignPermissionToRoleAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -35,13 +36,8 @@ class RolePermissionController extends AdminController
      */
     public function store(Request $request): RedirectResponse
     {
-        foreach ($request->all()['permissions'] as $permissionName => $roles) {
-            $permissionInstance = Permission::findByName($permissionName);
-            if (!empty($permissionInstance)) {
-                $permissionInstance->syncRoles(roles: $roles);
-            }
-        }
+        resolve(AssignPermissionToRoleAction::class)->handle($request->get('permissions'));
 
-        return redirect()->back();
+        return redirect()->back()->with('success', value: __('Update permission role successfully'));
     }
 }

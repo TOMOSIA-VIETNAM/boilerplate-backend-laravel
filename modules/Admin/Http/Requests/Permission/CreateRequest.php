@@ -18,14 +18,4 @@ class CreateRequest extends FormRequest
             'name' => ['required', 'string', 'max:50', 'unique:permissions,name'],
         ];
     }
-
-    /**
-     * @return array
-     */
-    public function onlyFields(): array
-    {
-        return $this->only([
-            'name',
-        ]);
-    }
 }

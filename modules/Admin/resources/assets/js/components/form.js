@@ -30,6 +30,7 @@ document.addEventListener("alpine:init", () => {
                     }
                     throw new Error('Network response was not ok');
                 }
+
                 location.reload();
             })
             .catch(error => {

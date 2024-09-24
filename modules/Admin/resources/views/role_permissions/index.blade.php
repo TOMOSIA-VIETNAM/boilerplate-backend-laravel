@@ -30,7 +30,7 @@
                                             <label for="permission_title" class="form-label">Name</label>
                                             <input type="text" class="form-control" name="name"
                                                 id="permission_title" x-model="formData.name"
-                                                placeholder="Permission name">
+                                                placeholder="Permission name" :class="{ 'is-invalid': errorMsg }">
                                             <span x-show="errorMsg" x-text="errorMsg" class="text-danger"></span>
                                         </div>
                                         <div class="text-start">

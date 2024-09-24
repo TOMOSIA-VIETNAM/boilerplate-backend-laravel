@@ -14,6 +14,9 @@ use Modules\Admin\Http\Requests\User\UpdateRequest;
 
 class UserController extends AdminController
 {
+    /**
+     * Summary of __construct
+     */
     public function __construct()
     {
         $this->middleware(['role:master_admin|admin|user', 'permission:writer'], ['except' => ['index']]);

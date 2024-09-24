@@ -14,6 +14,9 @@ use Spatie\Permission\Models\Role;
 
 class ManagementController extends AdminController
 {
+    /**
+     * Summary of __construct
+     */
     public function __construct()
     {
         $this->middleware(['role:master_admin'], ['except' => ['index']]);
