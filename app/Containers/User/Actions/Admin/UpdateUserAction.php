@@ -26,9 +26,6 @@ class UpdateUserAction extends BaseAction
     {
         try {
             $user = $this->repo->findById($id);
-            if (!$user) {
-                return false;
-            }
 
             if (!$data['password']) {
                 unset($data['password']);

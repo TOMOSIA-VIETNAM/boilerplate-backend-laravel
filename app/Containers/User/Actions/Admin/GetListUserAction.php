@@ -5,7 +5,7 @@ namespace App\Containers\User\Actions\Admin;
 use App\Actions\BaseAction;
 use App\Containers\User\Repositories\UserRepository;
 
-class GetListAction extends BaseAction
+class GetListUserAction extends BaseAction
 {
     /**
      * @return mixed
