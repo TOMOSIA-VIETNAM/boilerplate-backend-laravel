@@ -2,19 +2,19 @@
 
 namespace Modules\Admin\Http\Controllers;
 
+use App\Containers\Admin\Actions\CreateAction;
+use App\Containers\Admin\Actions\DetailAction;
+use App\Containers\Admin\Actions\GetListAction;
+use App\Containers\Admin\Actions\UpdateAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Modules\Admin\Http\Requests\Admin\CreateRequest;
 use Modules\Admin\Http\Requests\Admin\UpdateRequest;
-use Modules\Admin\Services\AdminService;
 use Spatie\Permission\Models\Role;
 
 class ManagementController extends AdminController
 {
-    /**
-     * @param AdminService $adminService
-     */
-    public function __construct(protected AdminService $adminService)
+    public function __construct()
     {
         $this->middleware(['role:master_admin'], ['except' => ['index']]);
     }
@@ -24,7 +24,7 @@ class ManagementController extends AdminController
      */
     public function index(): View
     {
-        $admins = $this->adminService->getLists();
+        $admins = resolve(GetListAction::class)->handle();
 
         return view('admin::admins.index', compact('admins'));
     }
@@ -45,7 +45,7 @@ class ManagementController extends AdminController
      */
     public function store(CreateRequest $request): RedirectResponse
     {
-        $created = $this->adminService->create($request->onlyFields());
+        $created = resolve(CreateAction::class)->handle($request->onlyFields());
 
         if (!$created) {
             return redirect()->back()->with('error', value: __('Create failure'));
@@ -61,7 +61,7 @@ class ManagementController extends AdminController
     public function edit(int $id): View
     {
         $roles = Role::get();
-        $admin = $this->adminService->findById($id);
+        $admin = resolve(DetailAction::class)->handle($id);
 
         return view('admin::admins.edit', compact('admin', 'roles'));
     }
@@ -73,7 +73,7 @@ class ManagementController extends AdminController
      */
     public function update(int $id, UpdateRequest $request): RedirectResponse
     {
-        $updated = $this->adminService->updateById($id, $request->onlyFields()['role_user']);
+        $updated = resolve(UpdateAction::class)->handle($id, $request->onlyFields()['role_user']);
 
         if (!$updated) {
             return redirect()->back()->with('error', value: __('Update failure'));

@@ -2,18 +2,19 @@
 
 namespace Modules\Admin\Http\Controllers;
 
+use App\Containers\User\Actions\Admin\CreateUserAction;
+use App\Containers\User\Actions\Admin\DeleteUserAction;
+use App\Containers\User\Actions\Admin\DetailUserAction;
+use App\Containers\User\Actions\Admin\GetListAction;
+use App\Containers\User\Actions\Admin\UpdateUserAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Modules\Admin\Http\Requests\User\CreateRequest;
 use Modules\Admin\Http\Requests\User\UpdateRequest;
-use Modules\Admin\Services\UserService;
 
 class UserController extends AdminController
 {
-    /**
-     * @param UserService $userService
-     */
-    public function __construct(protected UserService $userService)
+    public function __construct()
     {
         $this->middleware(['role:master_admin|admin|user', 'permission:writer'], ['except' => ['index']]);
     }
@@ -23,7 +24,7 @@ class UserController extends AdminController
      */
     public function index(): View
     {
-        $users = $this->userService->getLists();
+        $users = resolve(GetListAction::class)->handle();
 
         return view('admin::users.index', compact('users'));
     }
@@ -34,7 +35,7 @@ class UserController extends AdminController
      */
     public function delete(int $id): RedirectResponse
     {
-        $this->userService->deleteById($id);
+        resolve(DeleteUserAction::class)->handle($id);
 
         return redirect()->back()->with('success', __('Delete successfully'));
     }
@@ -53,7 +54,7 @@ class UserController extends AdminController
      */
     public function store(CreateRequest $request): RedirectResponse
     {
-        $created = $this->userService->create($request->onlyFields());
+        $created = resolve(CreateUserAction::class)->handle($request->onlyFields());
 
         if (!$created) {
             return redirect()->back()->with('error', value: __('Create failure'));
@@ -68,7 +69,7 @@ class UserController extends AdminController
      */
     public function edit(int $id): View
     {
-        $user = $this->userService->findById($id);
+        $user = resolve(DetailUserAction::class)->handle($id);
 
         return view('admin::users.edit', compact('user'));
     }
@@ -80,7 +81,7 @@ class UserController extends AdminController
      */
     public function update(int $id, UpdateRequest $request): RedirectResponse
     {
-        $updated = $this->userService->updateById($id, $request->onlyFields());
+        $updated = resolve(UpdateUserAction::class)->handle($id, $request->onlyFields());
 
         if (!$updated) {
             return redirect()->back()->with('error', value: __('Update failure'));
