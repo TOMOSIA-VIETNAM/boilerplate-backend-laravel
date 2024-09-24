@@ -1,29 +1,29 @@
 <?php
 
-namespace Modules\Api\Services;
+namespace App\Containers\User\Actions\Auth;
 
+use App\Containers\User\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Modules\Api\Http\Requests\Auth\LoginRequest;
 
-class AuthService
+class LoginAction
 {
     /**
-     * Handle login request
-     * 
      * @param LoginRequest $request
      * @return array
-     * @throws ValidationException
      */
-    public function login(LoginRequest $request): array
+    public function handle(LoginRequest $request): array
     {
         $request->authenticate();
+
+        /** @var User */
         $user = Auth::guard('api')->user();
-        $token = $user->createToken('API Token')->plainTextToken;
+
+        $token =$user->createToken($user->email)->plainTextToken;
 
         return [
-            'message' => 'Login Success',
             'token' => $token,
-            'type' => 'Bear'
+            'type' => 'Bearer'
         ];
     }
 }
