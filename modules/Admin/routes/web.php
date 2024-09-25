@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use Modules\Admin\Http\Controllers\Auth\LoginController;
 use Modules\Admin\Http\Controllers\Auth\LogoutController;
 use Modules\Admin\Http\Controllers\LocalizationController;
+use Modules\Admin\Http\Controllers\ManagementController;
+use Modules\Admin\Http\Controllers\PermissionController;
+use Modules\Admin\Http\Controllers\RolePermissionController;
 use Modules\Admin\Http\Controllers\UserController;
 
 Route::get('lang/{locale}', [LocalizationController::class, 'index'])->name('lang');
@@ -33,5 +36,36 @@ Route::middleware('auth:admin')->group(function () {
         Route::post('/create', 'store')->name('store');
         Route::get('/edit/{id}', 'edit')->name('edit');
         Route::post('/delete/{id}', 'delete')->name('delete');
+    });
+
+    Route::group([
+        'prefix'        => 'role_permission',
+        'as'            => 'role_permission.',
+        'controller'    =>  RolePermissionController::class,
+    ], function () {
+        Route::get('/', 'index')->name(name: 'index');
+        Route::post('/create', 'store')->name('store');
+    });
+
+    Route::group([
+        'prefix'        => 'permission',
+        'as'            => 'permission.',
+        'controller'    =>  PermissionController::class,
+    ], function () {
+        Route::post('/create', 'store')->name('store');
+        Route::post('/delete/{id}', 'delete')->name('delete');
+        Route::post(uri: '/update/{id}', action: 'update')->name('update');
+    });
+
+    Route::group([
+        'prefix'        => 'management',
+        'as'            => 'management.',
+        'controller'    =>  ManagementController::class,
+    ], function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post(uri: '/update/{id}', action: 'update')->name('update');
+        Route::post('/create', 'store')->name('store');
+        Route::get('/edit/{id}', 'edit')->name('edit');
     });
 });

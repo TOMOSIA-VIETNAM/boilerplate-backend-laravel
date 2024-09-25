@@ -52,16 +52,20 @@ class Handler extends ExceptionHandler
      */
     protected function invalidJson($request, ValidationException $e): Response | JsonResponse
     {
-        /** @var mixed|Response|JsonResponse */
-        $resource = $this->makeErrorResponse($e->status, $e->getMessage(), $e->errors());
-        $dataResource = $resource->getData();
-        if ($dataResource && empty($dataResource->data) && is_array($dataResource->data)) {
-            $dataResource->data = null;
-            $dataResource->meta->message = trans('errors.invalid_data');
-            $resource->setData($dataResource);
+        if (!$request->is('admin/*')) {
+            /** @var mixed|Response|JsonResponse */
+            $resource = $this->makeErrorResponse($e->status, $e->getMessage(), $e->errors());
+            $dataResource = $resource->getData();
+            if ($dataResource && empty($dataResource->data) && is_array($dataResource->data)) {
+                $dataResource->data = null;
+                $dataResource->meta->message = trans('errors.invalid_data');
+                $resource->setData($dataResource);
+            }
+
+            return $resource;
         }
 
-        return $resource;
+        return parent::invalidJson($request, $e);
     }
 
     /**
