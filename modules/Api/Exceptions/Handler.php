@@ -5,6 +5,7 @@ namespace Modules\Api\Exceptions;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
@@ -51,16 +52,20 @@ class Handler extends ExceptionHandler
      */
     protected function invalidJson($request, ValidationException $e): Response | JsonResponse
     {
-        /** @var mixed|Response|JsonResponse */
-        $resource = $this->makeErrorResponse($e->status, $e->getMessage(), $e->errors());
-        $dataResource = $resource->getData();
-        if ($dataResource && empty($dataResource->data) && is_array($dataResource->data)) {
-            $dataResource->data = null;
-            $dataResource->meta->message = trans('errors.invalid_data');
-            $resource->setData($dataResource);
+        if (!$request->is('admin/*')) {
+            /** @var mixed|Response|JsonResponse */
+            $resource = $this->makeErrorResponse($e->status, $e->getMessage(), $e->errors());
+            $dataResource = $resource->getData();
+            if ($dataResource && empty($dataResource->data) && is_array($dataResource->data)) {
+                $dataResource->data = null;
+                $dataResource->meta->message = trans('errors.invalid_data');
+                $resource->setData($dataResource);
+            }
+
+            return $resource;
         }
 
-        return $resource;
+        return parent::invalidJson($request, $e);
     }
 
     /**
@@ -94,17 +99,19 @@ class Handler extends ExceptionHandler
     /**
      * @param $request
      * @param Throwable $e
-     * @return JsonResponse|Response
+     * @return JsonResponse|Response|RedirectResponse
      * @throws Throwable
      */
-    public function render($request, Throwable $e): JsonResponse | Response
+    public function render($request, Throwable $e): JsonResponse | Response | RedirectResponse
     {
-        if ($e instanceof NotFoundHttpException) {
-            return $this->makeErrorResponse(ExceptionResponse::HTTP_NOT_FOUND, trans('errors.page_not_found'));
-        }
+        if ($request->expectsJson()) {
+            if ($e instanceof NotFoundHttpException) {
+                return $this->makeErrorResponse(ExceptionResponse::HTTP_NOT_FOUND, trans('errors.page_not_found'));
+            }
 
-        if ($e instanceof ModelNotFoundException) {
-            return $this->makeErrorResponse(ExceptionResponse::HTTP_NOT_FOUND, __('Not Found'));
+            if ($e instanceof ModelNotFoundException) {
+                return $this->makeErrorResponse(ExceptionResponse::HTTP_NOT_FOUND, __('Not Found'));
+            }
         }
 
         return parent::render($request, $e);

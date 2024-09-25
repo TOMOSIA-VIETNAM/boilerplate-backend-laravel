@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Containers\User\Models\Attributes;
+
 use App\Shared\Storage\StorageClient;
 
 trait UserAttribute

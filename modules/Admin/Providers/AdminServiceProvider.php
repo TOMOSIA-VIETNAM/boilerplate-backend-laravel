@@ -27,6 +27,7 @@ class AdminServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'admin');
 
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(ValidationProvider::class);
         $this->app->register(ViewServiceProvider::class);
     }
 }
