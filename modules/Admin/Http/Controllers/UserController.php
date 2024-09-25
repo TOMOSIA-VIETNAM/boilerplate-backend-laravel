@@ -5,7 +5,7 @@ namespace Modules\Admin\Http\Controllers;
 use App\Containers\User\Actions\Admin\CreateUserAction;
 use App\Containers\User\Actions\Admin\DeleteUserAction;
 use App\Containers\User\Actions\Admin\DetailUserAction;
-use App\Containers\User\Actions\Admin\GetListAction;
+use App\Containers\User\Actions\Admin\GetListUserAction;
 use App\Containers\User\Actions\Admin\UpdateUserAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -27,7 +27,7 @@ class UserController extends AdminController
      */
     public function index(): View
     {
-        $users = resolve(GetListAction::class)->handle();
+        $users = resolve(GetListUserAction::class)->handle();
 
         return view('admin::users.index', compact('users'));
     }

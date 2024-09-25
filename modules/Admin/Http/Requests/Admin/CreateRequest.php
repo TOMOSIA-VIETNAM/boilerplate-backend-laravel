@@ -18,7 +18,7 @@ class CreateRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'unique:admins,email'],
             'password' => ['required', 'string', 'confirmed'],
             'password_confirmation'  => ['required', 'string'],
-            'role_user' => ['required', 'integer']
+            'role_user' => ['required', 'integer', 'exists:roles,id']
         ];
     }
 
