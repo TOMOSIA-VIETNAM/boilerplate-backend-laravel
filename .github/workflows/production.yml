@@ -1,0 +1,29 @@
+name: Deploy Production
+
+on:
+  release:
+    branches:
+      - main
+    types: [ published ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+
+      - name: Install dependencies
+        run: composer update --lock
+
+      - name: Deploy
+        uses: deployphp/action@v1
+        with:
+          # The private SSH key used for connecting to remote servers
+          # This key is securely stored in GitHub Secrets and accessed via ${{ secrets.SSHKEY_PRO }}
+          private-key: ${{ secrets.SSHKEY_PRO }}
+          dep: deploy production -v
