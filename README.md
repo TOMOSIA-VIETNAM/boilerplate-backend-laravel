@@ -125,7 +125,44 @@ Release `main` branch to production
 
 Create a migration file and add columns/table, etc.
 
-## V. Deploy
+# V. Packages
+
+## 1. Containers
+Each container is responsible for performing a large business operation and is considered the core of the application
+
+### Create a new container:
+    sail artisan d:create {container-name}
+
+#### Example:
+    sail artisan d:create Payment
+
+It would create a container inside `app` folder under `Containers/Payment` folder.
+Also, it would generate the following scaffold:
+
+```shell
+|____app
+| |____ Containers
+| | |____ Payment
+| | | |____ Models
+| | | |____ Policies
+| | | |____ Actions
+| | | |____ Jobs
+| | | |____ Events
+| | | |____ Data
+| | | |____ Observers
+| | | |____ Listeners
+| | | |____ Services
+| | | |____ Repositories
+```
+
+Check the documentation below to view more details
+https://ddd.thejano.com/guide/usage.html#package-commands
+
+## 2. Enum
+### Create enum
+    sail artisan make:enum StatusEnum
+
+## VI. Deploy
 
 [Deployer documentation](https://deployer.org/docs/7.x/getting-started)
 

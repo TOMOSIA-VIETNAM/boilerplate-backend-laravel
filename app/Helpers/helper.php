@@ -29,3 +29,52 @@ if (!function_exists('getFlagByLocale')) {
         return LangEnum::ALLOW_LOCALES[$key];
     }
 }
+
+if (! function_exists('logErrorMessage')) {
+    /**
+     * @param string $message
+     * @param string $file
+     * @param int|string $line
+     * @return array|string
+     */
+    function logErrorMessage(string $message, string $file = '', int|string $line = ''): array|string
+    {
+        return "\n【ERROR】: {$message} \n【File】: {$file} \n【Line】: {$line}";
+    }
+}
+
+if (! function_exists('randomString')) {
+
+    /**
+     * Generate random string
+     */
+    function randomString(): string
+    {
+        return md5(uniqid((string)mt_rand(), true));
+    }
+}
+
+if (! function_exists('normalizeStr')) {
+    /**
+     * @param string|null $text
+     * @return string
+     */
+    function normalizeStr(?string $text): string
+    {
+        return $text ? Normalizer::normalize($text, Normalizer::FORM_C) : '';
+    }
+}
+if (! function_exists('checkRolePermission')) {
+
+    function checkRolePermission($role, $permission)
+    {
+        try {
+            if ($role->hasPermissionTo($permission)) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+}
