@@ -5,6 +5,7 @@ namespace Modules\Admin\Http\Controllers;
 use App\Containers\Admin\Actions\CreateAction;
 use App\Containers\Admin\Actions\DetailAction;
 use App\Containers\Admin\Actions\GetListAction;
+use App\Containers\Admin\Actions\Role\FindByIdAction;
 use App\Containers\Admin\Actions\UpdateAction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -48,7 +49,8 @@ class ManagementController extends AdminController
      */
     public function store(CreateRequest $request): RedirectResponse
     {
-        $created = resolve(CreateAction::class)->handle($request->onlyFields());
+        $role = resolve(FindByIdAction::class)->handle($request->role_user);
+        $created = resolve(CreateAction::class)->handle($request->onlyFields(), $role->name);
 
         if (!$created) {
             return redirect()->back()->with('error', value: __('Create failure'));
@@ -76,7 +78,8 @@ class ManagementController extends AdminController
      */
     public function update(int $id, UpdateRequest $request): RedirectResponse
     {
-        $updated = resolve(UpdateAction::class)->handle($id, $request->onlyFields()['role_user']);
+        $role = resolve(FindByIdAction::class)->handle($request->role_user);
+        $updated = resolve(UpdateAction::class)->handle($id, $role->name);
 
         if (!$updated) {
             return redirect()->back()->with('error', value: __('Update failure'));

@@ -36,7 +36,7 @@ class RolePermissionController extends AdminController
      */
     public function store(Request $request): RedirectResponse
     {
-        resolve(AssignPermissionToRoleAction::class)->handle($request->get('permissions'));
+        resolve(AssignPermissionToRoleAction::class)->handle($request->get('permissions', []));
 
         return redirect()->back()->with('success', value: __('Update permission role successfully'));
     }

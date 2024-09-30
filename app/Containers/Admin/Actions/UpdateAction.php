@@ -3,8 +3,8 @@
 namespace App\Containers\Admin\Actions;
 
 use App\Actions\BaseAction;
+use App\Containers\Admin\Actions\LogActivity\LogUpdatedAdminAction;
 use App\Containers\Admin\Repositories\AdminRepository;
-use Spatie\Permission\Models\Role;
 
 class UpdateAction extends BaseAction
 {
@@ -18,17 +18,20 @@ class UpdateAction extends BaseAction
 
     /**
      * @param int $id
-     * @param int $roleId
+     * @param int $currentRoleName
      * @return bool
      */
-    public function handle(int $id, int $roleId): bool
+    public function handle(int $id, string $currentRoleName): bool
     {
         $admin = $this->repo->findById($id);
         if (!$admin) {
             return false;
         }
 
-        $admin->syncRoles(Role::findById($roleId)->name);
+        $previousRoleName = $admin->roles?->first()?->name ?? '';
+        $admin->syncRoles($currentRoleName);
+        resolve(LogUpdatedAdminAction::class)->handle($admin, $previousRoleName, $currentRoleName);
+
         return true;
     }
 }

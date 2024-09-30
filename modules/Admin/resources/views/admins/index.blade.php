@@ -38,7 +38,7 @@
                                     <tr>
                                         <td>{{ $admin->id }}</td>
                                         <td>{{ $admin->email }}</td>
-                                        <td>{{ $admin->roles[0]?->name }}</td>
+                                        <td>{{ $admin->roles?->first()?->name }}</td>
                                         <td>{{ $admin->created_at }}</td>
                                         <td>
                                             <div class="flex align-items-center list-user-action">

@@ -291,3 +291,72 @@ To access the server securely, you need to store your SSH private key in GitHub 
   2. Add a new secret called **SSHKEY** and paste your private key.
 - GitHub Action Workflow:
 The workflow file ```.github/workflows/staging.yml``` is set to deploy when there is a merge commit to the develop branch. You can update the file or create an additional file for another server.
+
+# VII. Laravel Activity Log - Spatie v4
+
+## GITHUB
+
+    https://github.com/spatie/laravel-activitylog
+
+## FEATURES
+
+-   Record user or system activities on Eloquent models.
+-   Log information about the subject and causer.
+-   Store additional attributes in a JSON column.
+-   Easily extendable and customizable according to project requirements.
+
+## INSTALL
+
+### 1. Install the package via composer
+
+-   sail composer require spatie/laravel-activitylog
+
+### 2. Publish the migration
+
+-   sail artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
+
+### 3. Create table
+
+-   sail artisan migrate
+
+### 4. Publish the config file
+
+-   sail artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-config"
+
+## USING
+
+### 1. Logging activity
+
+-   App\Shared\ActivityLog\ActivityLogMethod::class
+-   Example
+    ```
+        activity()
+            ->performedOn($order)
+            ->causedBy(auth()->user())
+            ->withProperties(['status' => $order->status])
+            ->log('Updated the order');
+    ```
+
+### 2. Logging model events
+
+-   App\Containers\User\Models\User::class
+-   App\Containers\Admin\Models\Admin::class
+-   Automatically save Log of created, updated, deleted events
+
+### 3. Batch log
+
+-   Example
+    ```
+        LogBatch::startBatch();
+            -------------
+        LogBatch::endBatch();
+    ```
+
+## CLEANING
+
+    php artisan activitylog:clean
+    php artisan activitylog:clean my_log_channel
+
+## DOCUMENT
+
+    https://spatie.be/docs/laravel-activitylog/v4/introduction
