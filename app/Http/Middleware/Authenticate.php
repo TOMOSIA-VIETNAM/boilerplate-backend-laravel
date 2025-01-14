@@ -28,7 +28,8 @@ class Authenticate extends Middleware
     {
         $routes = [
             'admin.*' => 'admin',
-            'web.*'   => 'web'
+            'candidate.*'   => 'candidate',
+            'company.*'   => 'company',
         ];
 
         foreach ($routes as $pattern => $guard) {

@@ -2,7 +2,9 @@
 
 namespace App\Containers\Admin\Models;
 
-use App\Containers\Admin\Models\Traits\methods\AdminMethod;
+use App\Containers\Admin\Models\Traits\Methods\AdminMethod;
+use App\Containers\Admin\Models\Traits\Attributes\AdminAttribute;
+use App\Containers\Admin\Models\Traits\Relationships\AdminRelationship;
 use App\Enums\LogNameEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,9 +15,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Admin extends Authenticatable
 {
     use HasFactory;
-    use HasRoles;
-    use LogsActivity;
     use AdminMethod;
+    use AdminAttribute;
+    use AdminRelationship;
 
     /**
      * The attributes that are mass assignable.
@@ -58,7 +60,7 @@ class Admin extends Authenticatable
     {
         return LogOptions::defaults()
             ->logOnly(self::$logAttributes)
-            ->logOnlyDirty(self::$logOnlyDirty)
+            ->logOnlyDirty()
             ->useLogName(self::$logName);
     }
 

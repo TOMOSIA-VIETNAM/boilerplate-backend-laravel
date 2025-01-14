@@ -22,12 +22,8 @@ class CreateAction extends BaseAction
      * @param string $roleName
      * @return Model|null
      */
-    public function handle(array $data, string $roleName): Model|null
+    public function handle(array $data, string $roleName)
     {
-        $admin = $this->repo->create($data);
-        $admin->syncRoles($roleName);
-        resolve(LogCreatedAdminAction::class)->handle($admin, $roleName);
-
-        return $admin;
+       #
     }
 }

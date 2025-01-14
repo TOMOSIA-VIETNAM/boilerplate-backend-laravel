@@ -3,9 +3,8 @@
 namespace Modules\Admin\Providers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\ServiceProvider;
 
 class AdminServiceProvider extends ServiceProvider
 {
@@ -14,8 +13,8 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Blade::componentNamespace('Modules\\Admin\\View\\Components', 'admin');
-        Paginator::useBootstrapFive();
+        $this->loadViewsFrom(base_path('Modules/Admin/resources/views'), 'admin');
+        Paginator::defaultView('pagination::tailwind');
     }
 
     /**
@@ -24,8 +23,6 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'admin');
-
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(ValidationProvider::class);
         $this->app->register(ViewServiceProvider::class);

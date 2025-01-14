@@ -1,9 +1,8 @@
-import Alpine from 'alpinejs';
-import mask from '@alpinejs/mask'
+import './bootstrap';
 
-window.Alpine = Alpine;
-Alpine.plugin(mask)
-Alpine.start();
+import { createApp } from 'vue';
+import AdminApp from './components/App.vue';
+import LoginForm from './pages/LoginForm.vue';
 
-// Custom components
-import './components/index'
+createApp(AdminApp).mount('#admin');
+createApp(LoginForm).mount('#login');

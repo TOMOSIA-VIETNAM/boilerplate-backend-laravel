@@ -1,33 +1,23 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 
-const env = loadEnv(process.env.NODE_ENV, process.cwd(), '');
-
 export default defineConfig({
-    server: {
-        proxy: {
-            '/assets': {
-                target: env.APP_URL || 'http://localhost:8000',
-                changeOrigin: true,
-                secure: false,
-            },
-        },
-    },
     plugins: [
         laravel({
             input: [
-                // Admin modules
-                'modules/Admin/resources/assets/css/app.css',
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'modules/Admin/resources/assets/scss/app.scss',
                 'modules/Admin/resources/assets/js/app.js',
+                'modules/Candidate/resources/assets/scss/app.scss',
+                'modules/Candidate/resources/assets/js/app.js',
+                'modules/Company/resources/assets/scss/app.scss',
+                'modules/Company/resources/assets/js/app.js',
             ],
-            refresh: [
-                'modules/Admin/resources/**',
-            ],
+
+            refresh: true,
         }),
+        vue(),
     ],
-    resolve: {
-        alias: {
-            '$': 'jQuery'
-        },
-    },
 });
