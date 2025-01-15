@@ -13,7 +13,7 @@ class CompanyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadViewsFrom(base_path('Modules/Company/resources/views'), 'company');
+        $this->loadViewsFrom(base_path('modules/Company/resources/views'), 'company');
         Paginator::defaultView('pagination::tailwind');
     }
 

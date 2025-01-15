@@ -1,43 +1,28 @@
 <template>
-  <div class="mb-1 w-full">
-    <label class="flex justify-between items-center mb-2 text-xs">
-      {{ label }}
-      <span
-        v-if="isRequired"
-        class="border-[1px] border-red-500 text-xs w-[40px] text-center px-1 text-red-500 rounded-md ml-2"
-      >
-        必須
-      </span>
-    </label>
-    <div class="flex items-center">
-      <Field
-        v-model="selectedValue"
+    <div class="mb-4">
+      <label :for="id" class="block text-sm font-medium text-gray-700">{{ label }}</label>
+      <select
+        :id="id"
         :name="name"
-        as="select"
-        class="form-select border text-gray-500 px-3 py-3 focus:outline-none focus:border-brand-color focus:ring-1 focus:ring-brand-color rounded-md w-full shadow-md text-sm"
-        @change="handleChange"
+        :value="value"
+        @change="$emit('update:value', $event.target.value)"
+        class="w-full mt-1 p-2 border border-gray-300 rounded-md"
       >
-        <option v-for="(item, index) in options" :value="getOptionValue(item)" :key="index">
-          {{ getOptionText(item) }}
+        <option v-for="(option, index) in options" :key="index" :value="option.value">
+          {{ option.label }}
         </option>
-      </Field>
+      </select>
     </div>
-  </div>
-</template>
+  </template>
 
-<script setup>
-import { ref, defineProps, defineEmits } from 'vue'
-
-const props = defineProps(['label', 'name', 'options', 'isRequired', 'optionValue', 'optionText', 'defaultValue'])
-const emits = defineEmits(['update:modelValue'])
-
-const selectedValue = ref(props.defaultValue ?? '')
-
-const handleChange = (event) => {
-  selectedValue.value = event.target.value
-  emits('update:modelValue', selectedValue.value)
-}
-
-const getOptionValue = (item) => item[props.optionValue]
-const getOptionText = (item) => item[props.optionText]
-</script>
+  <script>
+  export default {
+    props: {
+      label: { type: String, required: true },
+      id: { type: String, required: true },
+      name: { type: String, required: true },
+      value: { type: [String, Number], default: '' },
+      options: { type: Array, required: true },
+    },
+  };
+  </script>

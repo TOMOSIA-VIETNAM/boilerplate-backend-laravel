@@ -13,7 +13,7 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadViewsFrom(base_path('Modules/Admin/resources/views'), 'admin');
+        $this->loadViewsFrom(base_path('modules/Admin/resources/views'), 'admin');
         Paginator::defaultView('pagination::tailwind');
     }
 

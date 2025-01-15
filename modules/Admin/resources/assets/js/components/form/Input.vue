@@ -1,27 +1,29 @@
 <template>
-  <div class="mb-1 w-full">
-    <label class="flex justify-between rounded-md items-center mb-2">
-      <span class="text-xs">{{ label }}</span>
-      <span
-        v-if="isRequired"
-        class="text-xs border-[1px] border-red-500 text-red-500 rounded-md px-1"
-      >
-        必須
-      </span>
-    </label>
-
-    <div class="flex items-center">
-      <Field
-        :value="modelValue"
-        :name="name"
-        :type="type"
-        class="border px-3 py-3 focus:outline-none focus:border-brand-color focus:ring-1 focus:ring-brand-color rounded-md w-full shadow-md"
-        @input="$emit('update:modelValue', $event.target.value)"
-      />
+    <div class="mb-4">
+        <label :for="id" class="block text-sm font-medium text-gray-700">{{ label }}</label>
+        <input
+            :type="type"
+            :id="id"
+            :name="name"
+            :value="value"
+            :placeholder="placeholder"
+            @input="$emit('update:value', $event.target.value)"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md"
+            :required="required"
+        />
     </div>
-  </div>
 </template>
 
-<script setup>
-const props = defineProps(['label', 'modelValue', 'name', 'type', 'isRequired'])
+<script>
+export default {
+    props: {
+        label: { type: String, required: true },
+        id: { type: String, required: true },
+        name: { type: String, required: true },
+        type: { type: String, default: 'text' },
+        value: { type: String, default: '' },
+        placeholder: { type: String, default: '' },
+        required: { type: Boolean, default: false }
+    }
+};
 </script>

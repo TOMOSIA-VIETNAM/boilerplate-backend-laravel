@@ -13,7 +13,7 @@ class CandidateServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadViewsFrom(base_path('Modules/Candidate/resources/views'), 'candidate');
+        $this->loadViewsFrom(base_path('modules/Candidate/resources/views'), 'candidate');
         Paginator::defaultView('pagination::tailwind');
     }
 

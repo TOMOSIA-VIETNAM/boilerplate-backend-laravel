@@ -1,66 +1,167 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# I. Project Overview
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Structure Project Sample
 
-## About Laravel
+# II. System Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-   PHP: 8.2
+-   Laravel: 11.31
+-   MYSQL 8.0
+-   OS: Macos, Linux
+-   Sail (Docker) 8.2
+-   UI: Vite, Tailwind
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# III. Getting started
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation
 
-## Learning Laravel
+### 1. Clone the repository
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+    git clone git@github.com:TOMOSIA-VIETNAM/winner_scout.git
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 2. Switch to the repo folder
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    cd winner_scout
 
-## Laravel Sponsors
+### 3. Copy the example env file and make the required configuration changes in the .env file
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+    cp .env.example .env
 
-### Premium Partners
+### 4. Install Laravel Sail
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/html laravelsail/php82-composer:latest composer install --ignore-platform-reqs
 
-## Contributing
+### 5. Open file `~/.zshrc` and add alias to shell
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    sudo vim ~/.zshrc
 
-## Code of Conduct
+Add this alias to `~/.zshrc` file
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
 
-## Security Vulnerabilities
+### 6. Modify hosts file
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    sudo vim /etc/hosts
 
-## License
+Add this line to hosts file
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    127.0.0.1 winner_scout.loc
+
+## Sail/Docker for Development
+
+### 1. Backend
+
+    sail up -d
+    sail composer install
+    sail composer dump-autoload
+    sail artisan key:generate
+    sail artisan optimize
+    sail artisan migrate
+    sail artisan db:seed
+    sail artisan storage:link
+
+Document api for [scramble]('https://scramble.dedoc.co/')
+
+Url document local: http://template-laravel-module.loc/api-docs
+
+### 2. Frontend
+
+    sail npm install
+
+#### 2.1 For development
+
+    sail npm run dev
+
+#### 2.2 For production
+
+    sail npm run build
+
+## Convention Fixer
+
+### 1. Check coding convention
+
+    sail pint --test
+
+### 2. Check and fix coding convention
+
+    sail pint -v
+
+# IV. Development flow
+
+## 1. Git flow
+
+Create a `feature` branch from the `develop` branch  
+↓  
+Development (during the process, if there is a topic regarding the source code, etc.)  
+↓  
+Create a pull request from `feature` branch to `develop` branch  
+↓  
+Review  
+↓  
+Merge into `develop` on GitHub  
+↓  
+Release `main` branch to production
+
+## 2. Git convention
+
+### 2.1. Naming branch
+
+-   `<type>/<issue_number><issue_name>`
+-   Example:
+    ```shell
+      - feature/issue-352-payment-api
+      - bugfix/issue-352-bug-payment
+      - release/v2.1-release-payment-api
+    ```
+
+### 2.2. Commit message
+
+-   `<type>: <description>`
+-   Example:
+    ```shell
+      - feat: Implement Admin UI dashboard
+      - refactor: Admin UI dashboard
+      - fix: Bug validation email when user register
+      - revert: Revert commit
+    ```
+
+## 3. Interact with database
+
+Create a migration file and add columns/table, etc.
+
+# V. Packages
+
+## 1. Containers
+Each container is responsible for performing a large business operation and is considered the core of the application
+
+### Create a new container:
+    sail artisan d:create {container-name}
+
+#### Example:
+    sail artisan d:create Payment
+
+It would create a container inside `app` folder under `Containers/Payment` folder.
+Also, it would generate the following scaffold:
+
+```shell
+|____app
+| |____ Containers
+| | |____ Payment
+| | | |____ Models
+| | | |____ Policies
+| | | |____ Actions
+| | | |____ Jobs
+| | | |____ Events
+| | | |____ Data
+| | | |____ Observers
+| | | |____ Listeners
+| | | |____ Services
+| | | |____ Repositories
+```
+
+Check the documentation below to view more details
+https://ddd.thejano.com/guide/usage.html#package-commands
+
+## 2. Enum
+### Create enum
+    sail artisan make:enum StatusEnum
