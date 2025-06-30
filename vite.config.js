@@ -10,10 +10,6 @@ export default defineConfig({
                 'resources/js/app.js',
                 'modules/Admin/resources/assets/scss/app.scss',
                 'modules/Admin/resources/assets/js/app.js',
-                'modules/Candidate/resources/assets/scss/app.scss',
-                'modules/Candidate/resources/assets/js/app.js',
-                'modules/Company/resources/assets/scss/app.scss',
-                'modules/Company/resources/assets/js/app.js',
             ],
 
             refresh: true,
