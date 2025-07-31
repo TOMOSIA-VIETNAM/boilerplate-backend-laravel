@@ -29,6 +29,8 @@ class AdminServiceProvider extends ServiceProvider
     {
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(FilamentServiceProvider::class);
+        // $this->app->register(ValidationProvider::class);
+        // $this->app->register(ViewServiceProvider::class);
     }
 
     /**
