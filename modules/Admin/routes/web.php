@@ -1,12 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Admin\Http\Controllers\AuthController;
 
-Route::get('/', function () {
-    return view('admin::index');
-});
-Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        // Language switching route
+        Route::get('/lang/{locale}', function ($locale) {
+            if (in_array($locale, ['en', 'ja'])) {
+                session(['locale' => $locale]);
+                app()->setLocale($locale);
+            }
+            return redirect()->back();
+        })->name('lang.switch');
+    });
 

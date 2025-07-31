@@ -4,12 +4,13 @@ Structure Project Sample
 
 # II. System Requirements
 
--   PHP: 8.2
+-   PHP: 8.3
 -   Laravel: 11.31
 -   MYSQL 8.0
 -   OS: Macos, Linux
 -   Sail (Docker) 8.2
 -   UI: Vite, Tailwind
+-   Filament: 3.0 (Admin Panel)
 
 # III. Getting started
 
@@ -86,7 +87,69 @@ Url document local: http://template-laravel-module.loc/api-docs
 
     sail pint -v
 
-# IV. Development flow
+# IV. Admin Panel (Filament)
+
+## 1. Access Admin Panel
+
+Document Filament at:
+
+    https://filamentphp.com/docs
+
+## 2. Default Login Credentials
+
+-   **Email**: admin@admin.com
+-   **Password**: password
+
+## 3. Features
+
+-   **Admin Management**: Complete CRUD operations for administrators
+-   **Multi-language Support**: English (EN) and Japanese (JP)
+-   **Language Switching**: Real-time language switching in admin panel
+-   **Authentication**: Secure admin authentication with separate guard
+-   **Modern UI**: Beautiful and responsive admin interface
+
+
+## 4. Module Structure
+
+The Admin module follows Laravel modular structure:
+
+```shell
+modules/Admin/
+├── Filament/
+│   ├── Resources/
+│   │   └── AdminResource.php
+│   ├── Pages/
+│   │   ├── CreateAdmin.php
+│   │   ├── EditAdmin.php
+│   │   └── ListAdmins.php
+│   └── Widgets/
+├── Http/
+│   ├── Controllers/
+│   └── Middleware/
+│       └── SetLocale.php
+├── lang/
+│   ├── en/
+│   │   └── common.php
+│   └── ja/
+│       └── common.php
+├── Providers/
+│   ├── AdminServiceProvider.php
+│   ├── FilamentServiceProvider.php
+│   └── RouteServiceProvider.php
+└── View/
+    └── Components/
+```
+
+## 5. Database Setup
+
+### Run Migrations and Seeders
+
+    sail artisan migrate
+    sail artisan db:seed --class=AdminSeeder
+
+This will create the admin table and insert the default admin user.
+
+# V. Development flow
 
 ## 1. Git flow
 
@@ -129,7 +192,7 @@ Release `main` branch to production
 
 Create a migration file and add columns/table, etc.
 
-# V. Packages
+# VI. Packages
 
 ## 1. Containers
 Each container is responsible for performing a large business operation and is considered the core of the application

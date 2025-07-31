@@ -14,6 +14,7 @@ class AdminServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadViewsFrom(base_path('modules/Admin/resources/views'), 'admin');
+        $this->loadTranslationsFrom(base_path('modules/Admin/lang'), 'admin');
         Paginator::defaultView('pagination::tailwind');
     }
 
@@ -24,7 +25,6 @@ class AdminServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->register(RouteServiceProvider::class);
-        $this->app->register(ValidationProvider::class);
-        $this->app->register(ViewServiceProvider::class);
+        $this->app->register(FilamentServiceProvider::class);
     }
 }

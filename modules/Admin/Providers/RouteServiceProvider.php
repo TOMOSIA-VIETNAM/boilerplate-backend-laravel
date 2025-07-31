@@ -20,9 +20,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapAdminRoutes(): void
     {
-        Route::prefix('admin')
-            ->middleware('web')
-            ->as('admin.')
+        Route::middleware('web')
             ->group(__DIR__ . '/../routes/web.php');
     }
 
