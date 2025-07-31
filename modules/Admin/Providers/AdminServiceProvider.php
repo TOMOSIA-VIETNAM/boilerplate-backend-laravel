@@ -2,7 +2,6 @@
 
 namespace Modules\Admin\Providers;
 
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Modules\Admin\Http\Middleware\Authenticate;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -15,7 +14,6 @@ class AdminServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadViewsFrom(base_path('modules/Admin/resources/views'), 'admin');
-        Paginator::useBootstrapFive();
         $this->registerMiddleware();
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->loadTranslationsFrom(base_path('modules/Admin/lang'), 'admin');
@@ -29,8 +27,6 @@ class AdminServiceProvider extends ServiceProvider
     {
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(FilamentServiceProvider::class);
-        // $this->app->register(ValidationProvider::class);
-        // $this->app->register(ViewServiceProvider::class);
     }
 
     /**
