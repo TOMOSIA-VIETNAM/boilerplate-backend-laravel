@@ -4,12 +4,13 @@ Structure Project Sample
 
 # II. System Requirements
 
--   PHP: 8.2
+-   PHP: 8.3
 -   Laravel: 11.31
 -   MYSQL 8.0
 -   OS: Macos, Linux
 -   Sail (Docker) 8.2
 -   UI: Vite, Tailwind
+-   Filament: 3.0 (Admin Panel)
 
 # III. Getting started
 
@@ -86,7 +87,7 @@ Url document local: http://template-laravel-module.loc/api-docs
 
     sail pint -v
 
-# IV. Development flow
+# V. Development flow
 
 ## 1. Git flow
 
@@ -145,28 +146,10 @@ app/
 ├── Models/              # Global models
 ├── Providers/           # Application providers
 └── Http/                # HTTP layer
-├── modules/             # Feature modules
-│   ├── Admin/           # Admin interface module
-│   │   ├── Http/
-│   │   │   ├── Controllers/
-│   │   │   ├── Middleware/
-│   │   │   └── Requests/
-│   │   ├── Providers/
-│   │   ├── resources/
-│   │   │   └── Views/
-│   │   ├── routes/
-│   │   └── View/
-│   │   └── Api/             # API module
-│   │       ├── Http/
-│   │       │   ├── Controllers/
-│   │       │   ├── Resources/
-│   │       │   └── Requests/
-│   │       ├── Providers/
-│   │       ├── resources/
-│   │       ├── routes/
-│   │       ├── Transforms/
-│   │       └── Traits/
-│   └── database/           # Database migrations & seeders
+
+modules/                 # Feature modules
+├── Admin/               # Admin interface module (Filament)
+└── Api/                 # API module (RESTful endpoints)
 ```
 
 ## 🎯 Core Containers
@@ -314,41 +297,34 @@ class CreateUserDTO
 
 **Cấu trúc**:
 ```
-Admin/
+modules/Admin/
+├── Filament/                           # Filament components
+│   ├── Resources/
+│   │   └── AdminResource/
+│   │       ├── Pages/
+│   │       └── Widgets/
+│   │   └── AdminResource.php           # Resource admin
+│   ├── Pages/                          # Custom pages
+│   └── Widgets/                        # Dashboard widgets
 ├── Http/
 │   ├── Controllers/
-│   │   ├── DashboardController.php
-│   │   ├── UserController.php
-│   │   ├── BlogController.php
-│   │   ├── UserAvatarController.php
-│   │   ├── AuthController.php
-│   │   └── Controller.php
+│   │   └── Controller.php              # Base controller
 │   ├── Middleware/
-│   └── Requests/
+│   │   ├── Authenticate.php            # Admin authentication
+│   │   └── SetLocale.php               # Language switching
+│   └── Requests/                       # Form requests
+├── lang/                               # Multi-language files
+│   ├── en/
+│   └── ja/
 ├── Providers/
-│   ├── AdminServiceProvider.php
-│   ├── RouteServiceProvider.php
-│   ├── ValidationProvider.php
-│   └── ViewServiceProvider.php
+│   ├── AdminServiceProvider.php        # Main service provider
+│   ├── FilamentServiceProvider.php     # Filament panel config
+│   └── RouteServiceProvider.php        # Routes configuration
 ├── resources/
-│   └── Views/
-│       ├── layouts/
-│       │   └── app.blade.php
-│       ├── index.blade.php
-│       ├── users/
-│       │   ├── index.blade.php
-│       │   ├── create.blade.php
-│       │   ├── edit.blade.php
-│       │   ├── show.blade.php
-│       │   └── avatar.blade.php
-│       └── blogs/
-│           ├── index.blade.php
-│           ├── create.blade.php
-│           ├── edit.blade.php
-│           └── show.blade.php
+│   ├── assets/                         # Frontend assets
+│   └── views/                          # Blade templates
 ├── routes/
-│   └── admin.php
-└── View/
+│   └── web.php                         # Web routes
 ```
 
 **Tính năng**:
@@ -585,6 +561,7 @@ FILESYSTEM_DISK=public
 │   └── Http/
 ├── modules/
 │   ├── Admin/
+│   │   ├── Filament/
 │   │   ├── Http/
 │   │   │   ├── Controllers/
 │   │   │   ├── Middleware/
