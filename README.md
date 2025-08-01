@@ -325,8 +325,6 @@ modules/Admin/
 │   └── views/                          # Blade templates
 ├── routes/
 │   └── web.php                         # Web routes
-└── View/
-    └── Components/                     # View components
 ```
 
 **Tính năng**:
