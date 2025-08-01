@@ -87,68 +87,6 @@ Url document local: http://template-laravel-module.loc/api-docs
 
     sail pint -v
 
-# IV. Admin Panel (Filament)
-
-## 1. Access Admin Panel
-
-Document Filament at:
-
-    https://filamentphp.com/docs
-
-## 2. Default Login Credentials
-
--   **Email**: admin@admin.com
--   **Password**: password
-
-## 3. Features
-
--   **Admin Management**: Complete CRUD operations for administrators
--   **Multi-language Support**: English (EN) and Japanese (JP)
--   **Language Switching**: Real-time language switching in admin panel
--   **Authentication**: Secure admin authentication with separate guard
--   **Modern UI**: Beautiful and responsive admin interface
-
-
-## 4. Module Structure
-
-The Admin module follows Laravel modular structure:
-
-```shell
-modules/Admin/
-├── Filament/
-│   ├── Resources/
-│   │   └── AdminResource.php
-│   ├── Pages/
-│   │   ├── CreateAdmin.php
-│   │   ├── EditAdmin.php
-│   │   └── ListAdmins.php
-│   └── Widgets/
-├── Http/
-│   ├── Controllers/
-│   └── Middleware/
-│       └── SetLocale.php
-├── lang/
-│   ├── en/
-│   │   └── common.php
-│   └── ja/
-│       └── common.php
-├── Providers/
-│   ├── AdminServiceProvider.php
-│   ├── FilamentServiceProvider.php
-│   └── RouteServiceProvider.php
-└── View/
-    └── Components/
-```
-
-## 5. Database Setup
-
-### Run Migrations and Seeders
-
-    sail artisan migrate
-    sail artisan db:seed --class=AdminSeeder
-
-This will create the admin table and insert the default admin user.
-
 # V. Development flow
 
 ## 1. Git flow
@@ -208,28 +146,10 @@ app/
 ├── Models/              # Global models
 ├── Providers/           # Application providers
 └── Http/                # HTTP layer
-├── modules/             # Feature modules
-│   ├── Admin/           # Admin interface module
-│   │   ├── Http/
-│   │   │   ├── Controllers/
-│   │   │   ├── Middleware/
-│   │   │   └── Requests/
-│   │   ├── Providers/
-│   │   ├── resources/
-│   │   │   └── Views/
-│   │   ├── routes/
-│   │   └── View/
-│   │   └── Api/             # API module
-│   │       ├── Http/
-│   │       │   ├── Controllers/
-│   │       │   ├── Resources/
-│   │       │   └── Requests/
-│   │       ├── Providers/
-│   │       ├── resources/
-│   │       ├── routes/
-│   │       ├── Transforms/
-│   │       └── Traits/
-│   └── database/           # Database migrations & seeders
+
+modules/                 # Feature modules
+├── Admin/               # Admin interface module (Filament)
+└── Api/                 # API module (RESTful endpoints)
 ```
 
 ## 🎯 Core Containers
@@ -377,41 +297,36 @@ class CreateUserDTO
 
 **Cấu trúc**:
 ```
-Admin/
+modules/Admin/
+├── Filament/                           # Filament components
+│   ├── Resources/
+│   │   └── AdminResource/
+│   │       ├── Pages/
+│   │       └── Widgets/
+│   │   └── AdminResource.php           # Resource admin
+│   ├── Pages/                          # Custom pages
+│   └── Widgets/                        # Dashboard widgets
 ├── Http/
 │   ├── Controllers/
-│   │   ├── DashboardController.php
-│   │   ├── UserController.php
-│   │   ├── BlogController.php
-│   │   ├── UserAvatarController.php
-│   │   ├── AuthController.php
-│   │   └── Controller.php
+│   │   └── Controller.php              # Base controller
 │   ├── Middleware/
-│   └── Requests/
+│   │   ├── Authenticate.php            # Admin authentication
+│   │   └── SetLocale.php               # Language switching
+│   └── Requests/                       # Form requests
+├── lang/                               # Multi-language files
+│   ├── en/
+│   └── ja/
 ├── Providers/
-│   ├── AdminServiceProvider.php
-│   ├── RouteServiceProvider.php
-│   ├── ValidationProvider.php
-│   └── ViewServiceProvider.php
+│   ├── AdminServiceProvider.php        # Main service provider
+│   ├── FilamentServiceProvider.php     # Filament panel config
+│   └── RouteServiceProvider.php        # Routes configuration
 ├── resources/
-│   └── Views/
-│       ├── layouts/
-│       │   └── app.blade.php
-│       ├── index.blade.php
-│       ├── users/
-│       │   ├── index.blade.php
-│       │   ├── create.blade.php
-│       │   ├── edit.blade.php
-│       │   ├── show.blade.php
-│       │   └── avatar.blade.php
-│       └── blogs/
-│           ├── index.blade.php
-│           ├── create.blade.php
-│           ├── edit.blade.php
-│           └── show.blade.php
+│   ├── assets/                         # Frontend assets
+│   └── views/                          # Blade templates
 ├── routes/
-│   └── admin.php
+│   └── web.php                         # Web routes
 └── View/
+    └── Components/                     # View components
 ```
 
 **Tính năng**:
@@ -648,6 +563,7 @@ FILESYSTEM_DISK=public
 │   └── Http/
 ├── modules/
 │   ├── Admin/
+│   │   ├── Filament/
 │   │   ├── Http/
 │   │   │   ├── Controllers/
 │   │   │   ├── Middleware/

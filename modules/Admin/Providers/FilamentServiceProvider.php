@@ -16,7 +16,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use App\Models\Admin;
 use Modules\Admin\Http\Middleware\SetLocale;
 use Filament\View\PanelsRenderHook;
 
